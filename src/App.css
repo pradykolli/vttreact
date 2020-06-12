@@ -64,12 +64,15 @@
   box-shadow: 3px 3px 8px 0 #919191,
               -3px -3px 8px 0 #e6e6e6;
   z-index: 1;
-  width: 50px;
-  height: 50px;
+  width: 55px;
+  height: 55px;
+}
+.stop{
+  right: 85px;
 }
 .listeningVoice{
-  width: 58px;
-  height: 58px;
+  width: 62px;
+  height: 62px;
   background-image: linear-gradient(45deg, red 25%, white 75%);
   position: absolute;
   animation: circle ease-in 4s infinite;

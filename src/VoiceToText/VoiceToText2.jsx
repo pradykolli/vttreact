@@ -2,7 +2,7 @@ import React, { Fragment, useState } from "react";
 // Import the cognitive services.
 import * as SpeechSDK from "microsoft-cognitiveservices-speech-sdk";
 
-const VoiceToText = () => {
+const VoiceToText2 = () => {
   //Set audio configuration to microphone
   var audioConfig;
   audioConfig = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
@@ -132,10 +132,47 @@ const VoiceToText = () => {
     };
 
     // Starts recognition
-    recognizer.startContinuousRecognitionAsync();
+    // Note: this is how you can process the result directly
+    //       rather then subscribing to the recognized
+    //       event
+    // The continuation below shows how to get the same data from the final result as you'd get from the
+    // events above.
+    recognizer.recognizeOnceAsync(
+      function (result) {
+          console.log(result);
 
-    // sdkStartContinousRecognitionBtn.disabled = true;
-    // sdkStopContinousRecognitionBtn.disabled = false;
+          console.log("(continuation) Reason: " + SpeechSDK.ResultReason[result.reason]);
+          switch (result.reason) {
+              case SpeechSDK.ResultReason.RecognizedSpeech:
+                console.log(" Text: " + result.text);
+                  break;
+              case SpeechSDK.ResultReason.NoMatch:
+                  var noMatchDetail = SpeechSDK.NoMatchDetails.fromResult(result);
+                  console.log(" NoMatchReason: " + SpeechSDK.NoMatchReason[noMatchDetail.reason]);
+                  break;
+              case SpeechSDK.ResultReason.Canceled:
+                  var cancelDetails = SpeechSDK.CancellationDetails.fromResult(result);
+                  console.log(" CancellationReason: " + SpeechSDK.CancellationReason[cancelDetails.reason]);
+
+                  if (cancelDetails.reason === SpeechSDK.CancellationReason.Error) {
+                    console.log(": " + cancelDetails.errorDetails);
+                  }
+                  break;
+              default: break;
+          }
+          console.log("\r\n");
+
+          setText(result.text + "\r\n");
+
+          onStopRecordHandler();
+      },
+      function (err) {
+          console.log(err);
+
+          console.log("ERROR: " + err);
+
+          onStopRecordHandler();
+      });
     setRecording(true);
   };
   const onStopRecordHandler = () => {
@@ -164,18 +201,9 @@ const VoiceToText = () => {
           placeholder="Add notes here"
         ></textarea>
         <div className="recordButtonWrapper">
-          {
-          recording 
-          ?  
-          <button className="recordVoiceBTN" onClick={onStopRecordHandler}>
-            Stop
-          </button>
-          :
-          <button className="recordVoiceBTN" onClick={onRecordClickHandler}>
-            Record
-          </button>
-          }
-
+            <button className="recordVoiceBTN" onClick={onRecordClickHandler}>
+              {recording ? "Recording" : "Record"}
+            </button>
           <div className={recording ? "listeningVoice" : ""}></div>
         </div>
       </div>
@@ -188,4 +216,4 @@ const VoiceToText = () => {
   );
 };
 
-export default VoiceToText;
+export default VoiceToText2;
