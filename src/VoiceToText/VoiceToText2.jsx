@@ -29,6 +29,7 @@ const VoiceToText2 = () => {
 
   //State variable to save text.
   const [text, setText] = useState("");
+  const [consolidateText, setConsolidateText] = useState(text)
   const [recording, setRecording] = useState(false);
   let lastRecognized = "";
 
@@ -89,6 +90,7 @@ const VoiceToText2 = () => {
       }
       lastRecognized = lastRecognized + e.result.text + "\r\n";
       setText(lastRecognized);
+      setConsolidateText(prevText => prevText + lastRecognized)
     };
     // The event signals that the service has stopped processing speech.
     // https://docs.microsoft.com/javascript/api/microsoft-cognitiveservices-speech-sdk/speechrecognitioncanceledeventargs?view=azure-node-latest
@@ -197,7 +199,7 @@ const VoiceToText2 = () => {
           rows="10"
           cols="100"
           onChange={(e) => onChangeHandler(e)}
-          value={text}
+          value={consolidateText}
           placeholder="Add notes here"
         ></textarea>
         <div className="recordButtonWrapper">
@@ -209,7 +211,7 @@ const VoiceToText2 = () => {
       </div>
       <div>
         <p>Recorded Message is:</p>
-        <p>{text}</p>
+        <p>{consolidateText}</p>
       </div>
       <button onClick={onSubmitHandler}>Submit</button>
     </Fragment>
